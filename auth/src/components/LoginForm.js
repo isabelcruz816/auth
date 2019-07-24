@@ -1,11 +1,24 @@
 import React, { Component} from 'react';
+import { Text } from 'react-native';
 import { Button, Card, CardSection, Input } from './common';
-import { thisExpression } from '@babel/types';
+import firebase from 'firebase';
 
 class LoginForm extends Component {
-    state = { email: '' };
-    state = { password: '' };
+    state = { email: '', password: '', error: '' };
     
+    // Authenticate user
+    onButtonPress() {
+        const { email, password } = this.state;
+
+        firebase.auth().signInWithEmailAndPassword(email, password)
+         .catch( () => {
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+             .catch( () => {
+                this.setState({ error: 'Failed' });
+             });
+         });
+    }
+
     render() {
         return (
             <Card>
@@ -27,13 +40,24 @@ class LoginForm extends Component {
                         onChangeText = { password => this.setState( { password })}
                     />
                 </CardSection>
+                <Text style = {styles.errorTextStyle}>
+                    {this.state.error}
+                </Text>
                 <CardSection>
-                    <Button>
+                    <Button onPress = { this.onButtonPress.bind(this) }>
                         Log in
                     </Button>
                 </CardSection>
             </Card>
         );
+    }
+};
+
+const styles = {
+    errorTextStyle: {
+        fontSize: 20,
+        alignSelf: 'center',
+        color: 'red'
     }
 };
 

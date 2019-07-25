@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import firebase from 'firebase';
-import { Header, Button } from './components/common';
+import { Header, Button, Spinner } from './components/common';
 import LoginForm from './components/LoginForm';
 
 class App extends Component {
-    state = { loggedIn: false };
+    state = { loggedIn: null };
 
     UNSAFE_componentWillMount() {
         
@@ -30,14 +30,16 @@ class App extends Component {
     };
 
     renderContent() {
-        if (this.state.loggedIn) {
-            return(
-                <Button>
-                    Log Out
-                </Button>
-            );
+        switch (this.state.loggedIn) {
+            case true:
+                return <Button>Log Out</Button>
+            
+            case false:
+                return <LoginForm/>;
+
+            default:
+                return <Spinner size = "large"/>;
         }
-        return <LoginForm/>;
     };
 
     render() {
